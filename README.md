@@ -1,212 +1,148 @@
-# Telegram Mini Apps React Template
+# Telegram Ads Marketplace MVP
 
-This template demonstrates how developers can implement a single-page
-application on the Telegram Mini Apps platform using the following technologies
-and libraries:
+Escrow-based ads marketplace connecting Telegram channel owners with advertisers.
 
-- [React](https://react.dev/)
-- [TypeScript](https://www.typescriptlang.org/)
-- [TON Connect](https://docs.ton.org/develop/dapps/ton-connect/overview)
-- [@tma.js SDK](https://docs.telegram-mini-apps.com/packages/tma-js-sdk)
-- [Telegram UI](https://github.com/Telegram-Mini-Apps/TelegramUI)
-- [Vite](https://vitejs.dev/)
+## 🏗️ Project Structure
 
-> The template was created using [npm](https://www.npmjs.com/). Therefore, it is
-> required to use it for this project as well. Using other package managers, you
-> will receive a corresponding error.
+- **`frontend/`** - React Mini App (Telegram Mini Apps)
+- **`backend/`** - NestJS API + Telegram Bot
 
-## Install Dependencies
+## 🚀 Quick Start
 
-If you have just cloned this template, you should install the project
-dependencies using the command:
+### Prerequisites
+- Node.js 18+
+- PostgreSQL 14+
+- Redis 7+
+- pnpm (or npm)
 
-```Bash
-npm install
-```
-
-## Scripts
-
-This project contains the following scripts:
-
-- `dev`. Runs the application in development mode.
-- `dev:https`. Runs the application in development mode using locally created valid SSL-certificates.
-- `build`. Builds the application for production.
-- `lint`. Runs [eslint](https://eslint.org/) to ensure the code quality meets
-  the required standards.
-- `deploy`. Deploys the application to GitHub Pages.
-
-To run a script, use the `npm run` command:
-
-```Bash
-npm run {script}
-# Example: npm run build
-```
-
-## Create Bot and Mini App
-
-Before you start, make sure you have already created a Telegram Bot. Here is
-a [comprehensive guide](https://docs.telegram-mini-apps.com/platform/creating-new-app)
-on how to do it.
-
-## Run
-
-Although Mini Apps are designed to be opened
-within [Telegram applications](https://docs.telegram-mini-apps.com/platform/about#supported-applications),
-you can still develop and test them outside of Telegram during the development
-process.
-
-To run the application in the development mode, use the `dev` script:
-
+### 1. Setup Backend
 ```bash
-npm run dev:https
+cd backend
+
+# Install dependencies
+pnpm install
+
+# Configure environment
+cp .env.example .env
+# Edit .env with your values
+
+# Setup database
+npx prisma migrate dev
+
+# Start server
+pnpm run start:dev
 ```
 
-> [!NOTE]
-> As long as we use [vite-plugin-mkcert](https://www.npmjs.com/package/vite-plugin-mkcert),
-> launching the dev mode for the first time, you may see sudo password request.
-> The plugin requires it to properly configure SSL-certificates. To disable the plugin, use the `npm run dev` command.
+Backend runs at `http://localhost:3000`
 
-After this, you will see a similar message in your terminal:
-
+### 2. Setup Frontend
 ```bash
-VITE v5.2.12  ready in 237 ms
+cd frontend
 
-➜  Local:   https://localhost:5173/reactjs-template
-➜  Network: https://172.18.16.1:5173/reactjs-template
-➜  Network: https://172.19.32.1:5173/reactjs-template
-➜  Network: https://192.168.0.171:5173/reactjs-template
-➜  press h + enter to show help
+# Install dependencies
+pnpm install
+
+# Configure environment
+cp .env.example .env.local
+# Edit .env.local with your values
+
+# Start dev server
+pnpm run dev:https
 ```
 
-Here, you can see the `Local` link, available locally, and `Network` links
-accessible to all devices in the same network with the current device.
+Frontend runs at `https://localhost:5173`
 
-To view the application, you need to open the `Local`
-link (`https://localhost:5173/reactjs-template` in this example) in your
-browser:
+### 3. Create Telegram Bot
 
-![Application](assets/application.png)
+1. Message [@BotFather](https://t.me/BotFather)
+2. Create new bot: `/newbot`
+3. Copy token to `backend/.env`
+4. Set Mini App URL: `/newapp` → paste your frontend URL
 
-It is important to note that some libraries in this template, such as
-`@tma.js/sdk`, are not intended for use outside of Telegram.
+## 📦 Tech Stack
 
-Nevertheless, they appear to function properly. This is because the
-`src/mockEnv.ts` file, which is imported in the application's entry point (
-`src/index.ts`), employs the `mockTelegramEnv` function to simulate the Telegram
-environment. This trick convinces the application that it is running in a
-Telegram-based environment. Therefore, be cautious not to use this function in
-production mode unless you fully understand its implications.
+### Frontend
+- React 18 + TypeScript
+- Vite
+- @tma.js/sdk (Telegram Mini Apps)
+- TON Connect (wallet integration)
+- TanStack Query (API calls)
 
-> [!WARNING]
-> Because we are using self-signed SSL certificates, the Android and iOS
-> Telegram applications will not be able to display the application. These
-> operating systems enforce stricter security measures, preventing the Mini App
-> from loading. To address this issue, refer to
-> [this guide](https://docs.telegram-mini-apps.com/platform/getting-app-link#remote).
+### Backend
+- NestJS
+- PostgreSQL + Prisma ORM
+- Redis + BullMQ (job queues)
+- Telegraf (Telegram bot)
+- TON SDK (escrow wallets)
 
-## Deploy
+## 🔑 Environment Variables
 
-This boilerplate uses GitHub Pages as the way to host the application
-externally. GitHub Pages provides a CDN which will let your users receive the
-application rapidly. Alternatively, you could use such services
-as [Heroku](https://www.heroku.com/) or [Vercel](https://vercel.com).
-
-### Manual Deployment
-
-This boilerplate uses the [gh-pages](https://www.npmjs.com/package/gh-pages)
-tool, which allows deploying your application right from your PC.
-
-#### Configuring
-
-Before running the deployment process, ensure that you have done the following:
-
-1. Replaced the `homepage` value in `package.json`. The GitHub Pages deploy tool
-   uses this value to
-   determine the related GitHub project.
-2. Replaced the `base` value in `vite.config.ts` and have set it to the name of
-   your GitHub
-   repository. Vite will use this value when creating paths to static assets.
-
-For instance, if your GitHub username is `telegram-mini-apps` and the repository
-name is `is-awesome`, the value in the `homepage` field should be the following:
-
-```json
-{
-  "homepage": "https://telegram-mini-apps.github.io/is-awesome"
-}
+### Frontend (`.env.local`)
+```env
+VITE_API_URL=http://localhost:3000
+VITE_BOT_USERNAME=your_bot_name
 ```
 
-And `vite.config.ts` should have this content:
-
-```ts
-export default defineConfig({
-  base: '/is-awesome/',
-  // ...
-});
+### Backend (`.env`)
+```env
+DATABASE_URL=postgresql://user:pass@localhost:5432/telegram_ads
+REDIS_URL=redis://localhost:6379
+BOT_TOKEN=your_telegram_bot_token
+TON_MASTER_SEED=your_ton_wallet_seed
+JWT_SECRET=your_jwt_secret
 ```
 
-You can find more information on configuring the deployment in the `gh-pages`
-[docs](https://github.com/tschaub/gh-pages?tab=readme-ov-file#github-pages-project-sites).
+See `.env.example` files in each directory for full details.
 
-#### Before Deploying
+## 📝 Key Features (MVP)
 
-Before deploying the application, make sure that you've built it and going to
-deploy the fresh static files:
+- [x] Telegram authentication
+- [x] Channel registration & verification
+- [x] Ad campaign creation
+- [ ] Escrow payment flow (TON)
+- [ ] Creative approval workflow
+- [ ] Auto-posting to channels
+- [ ] Deal lifecycle management
 
+## 🗂️ Database Schema
+
+See `backend/prisma/schema.prisma` for full schema.
+
+Key entities: User, Channel, Campaign, Deal, ChannelPricing
+
+## 🤖 Telegram Bot Commands
+
+- `/start` - Welcome message
+- `/register_channel` - Register your channel
+- `/my_channels` - View your channels
+- `/my_deals` - View active deals
+
+## 📚 Documentation
+
+- [Backend API Docs](./backend/README.md)
+- [Frontend Setup](./frontend/README.md)
+- [Deployment Guide](./docs/deployment.md)
+
+## 🧪 Development
 ```bash
-npm run build
+# Run tests
+cd backend && pnpm test
+cd frontend && pnpm test
+
+# Lint
+cd backend && pnpm lint
+cd frontend && pnpm lint
 ```
 
-Then, run the deployment process, using the `deploy` script:
+## 🚢 Deployment
 
-```Bash
-npm run deploy
-```
+- Frontend: GitHub Pages (configured in `.github/workflows`)
+- Backend: TBD (Railway, Render, or VPS)
 
-After the deployment completed successfully, visit the page with data according
-to your username and repository name. Here is the page link example using the
-data mentioned above:
-https://telegram-mini-apps.github.io/is-awesome
+## 📄 License
 
-### GitHub Workflow
+MIT
 
-To simplify the deployment process, this template includes a
-pre-configured [GitHub workflow](.github/workflows/github-pages-deploy.yml) that
-automatically deploys the project when changes are pushed to the `master`
-branch.
+## 👥 Team
 
-To enable this workflow, create a new environment (or edit the existing one) in
-the GitHub repository settings and name it `github-pages`. Then, add the
-`master` branch to the list of deployment branches.
-
-You can find the environment settings using this
-URL: `https://github.com/{username}/{repository}/settings/environments`.
-
-![img.png](.github/deployment-branches.png)
-
-In case, you don't want to do it automatically, or you don't use GitHub as the
-project codebase, remove the `.github` directory.
-
-### GitHub Web Interface
-
-Alternatively, developers can configure automatic deployment using the GitHub
-web interface. To do this, follow the link:
-`https://github.com/{username}/{repository}/settings/pages`.
-
-## TON Connect
-
-This boilerplate utilizes
-the [TON Connect](https://docs.ton.org/develop/dapps/ton-connect/overview)
-project to demonstrate how developers can integrate functionality related to TON
-cryptocurrency.
-
-The TON Connect manifest used in this boilerplate is stored in the `public`
-folder, where all publicly accessible static files are located. Remember
-to [configure](https://docs.ton.org/develop/dapps/ton-connect/manifest) this
-file according to your project's information.
-
-## Useful Links
-
-- [Platform documentation](https://docs.telegram-mini-apps.com/)
-- [@tma.js/sdk-react documentation](https://docs.telegram-mini-apps.com/packages/tma-js-sdk-react)
-- [Telegram developers community chat](https://t.me/devs_cis)
+Built for Telegram Mini Apps Hackathon
